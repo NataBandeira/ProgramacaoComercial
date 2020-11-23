@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <form action="{% url 'logout_usuario' %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Submit">
+    </form>
+
+    <h1>Olá! Você está logado!</h1>
+
+</body>
+
+</html>
