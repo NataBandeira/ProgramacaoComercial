@@ -1,8 +1,10 @@
+from dashboard.models import Ususario
 from django.http import HttpResponse
 from django.template import loader
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from django.views import View
+from dashboard.forms import UsuarioForm
 
 
 def login_page(request):
@@ -14,6 +16,27 @@ def login_page(request):
 def logout_user(request):
     logout(request)
     return redirect('/')
+
+
+def register(request):
+        if request.method == 'POST':
+            form = UsuarioForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                # usuario = Ususario()
+                # usuario
+                return redirect('/home/')
+                
+            else:
+                print("ERROR")
+                form = UsuarioForm(request.POST)
+                return render(request, 'homepage/cadastrar_usuario.html', {'form': form})
+            
+        else:
+            form = UsuarioForm()
+            return render(request, 'homepage/cadastrar_usuario.html', {'form': form})
+
+    # form = UsuarioForm()
 
 
 class Authenticate(View):
