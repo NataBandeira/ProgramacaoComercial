@@ -1,28 +1,107 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from . import models
+
+
+class ProdutoForm(forms.Form):
+    produto_nome = forms.CharField(max_length=240, label='Nome do produto:')
+    valor = forms.FloatField(label='Valor:')
+    descricao = forms.CharField(label='Descrição:', max_length=480)
+    imagem_produto = forms.ImageField(
+        widget=forms.ClearableFileInput(attrs={'multiple': True})
+    )
+
+    class Meta:
+        model = models.Produto
+        fields = ['produto_nome', 'valor', 'descricao', 'imagem_produto']
+
+    def save(self):
+        produto = models.Produto.objects.create(
+            produto_nome=self.cleaned_data['produto_nome'],
+            valor=self.cleaned_data['valor'],
+            descricao=self.cleaned_data['descricao'],
+        )
+        return produto
+
+
+class EnderecoForm(forms.Form):
+
+    telefone_contato = forms.CharField(
+        max_length=11,
+        label='Telefone para contato:',
+    )
+
+    cep = forms.CharField(
+        max_length=8,
+        label='Cep:',
+    )
+
+    bairro = forms.CharField(
+        max_length=120,
+        label='Bairro:',
+    )
+
+    rua = forms.CharField(
+        max_length=120,
+        label='Rua:',
+    )
+
+    numero = forms.CharField(
+        max_length=10,
+        label='Número:',
+    )
+
+    informacao_adicional = forms.CharField(
+        max_length=240,
+        label='Informação adicional:',
+    )
+
+    class Meta:
+        model = models.Endereco
+        fields = ('telefone_contato', 'cep', 'bairro',
+                  'rua', 'numero', 'informacao_adicional')
+
+    def save(self, request):
+        endereco = models.Endereco(
+            telefone_contato=self.cleaned_data['telefone_contato'],
+            cep=self.cleaned_data['cep'],
+            bairro=self.cleaned_data['bairro'],
+            rua=self.cleaned_data['rua'],
+            numero=self.cleaned_data['numero'],
+            informacao_adicional=self.cleaned_data['informacao_adicional'],
+        )
+        cliente = models.Cliente.objects.get(user=request.user.id)
+        endereco.cliente = cliente
+        endereco.save()
+        return endereco
 
 
 class UsuarioForm(forms.Form):
 
     username = forms.CharField(
-        label='Nome usuario',
+        label='Nome:',
         widget=forms.TextInput(
             # attrs={'placeholder': 'Maria ..'}
         )
     )
 
+    telefone = forms.CharField(
+        max_length=11,
+        label='Telefone:',
+    )
+
     email = forms.EmailField(
-        label='Email',
+        label='E-mail:',
     )
 
     password1 = forms.CharField(
-        label='Enter password',
+        label='Senha:',
         widget=forms.PasswordInput
     )
 
     password2 = forms.CharField(
-        label='Enter password',
+        label='Confirme sua senha:',
         widget=forms.PasswordInput
     )
 
@@ -40,29 +119,7 @@ class UsuarioForm(forms.Form):
             self.cleaned_data['email'],
             self.cleaned_data['password1']
         )
+        cliente = models.Cliente(
+            telefone=self.cleaned_data['telefone'], user=user)
+        cliente.save()
         return user
-
- # class Meta:
-    #     model = User
-    #     fields = ('username', 'email', 'password', 'password2')
-
-    # def __init__(self, *args, **kwargs):
-    #         super().__init__(*args, **kwargs)
-    #         self.helper = FormHelper()
-    #         self.helper.layout = Layout(
-    #             Row(
-    #                 Column('primeiro_nome', css_class='form-group col-md-6 mb-0'),
-    #                 Column('sobrenome', css_class='form-group col-md-6 mb-0'),
-    #                 css_class='form-row'
-    #             ),
-    #             Row(
-    #                 Column('telefone', css_class='form-group col-md-6 mb-0'),
-    #             ),
-    #             Submit('submit', 'Sign in')
-    #         )
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.helper = FormHelper()
-    #     self.helper.form_method = 'post'
-    #     self.helper.add_input(Submit('submit', 'Save person'))

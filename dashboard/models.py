@@ -1,17 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.base import Model
 
 
-class Ususario(models.Model):
-    primeiro_nome = models.CharField(max_length=30)
-    sobrenome = models.CharField(max_length=30)
+class Cliente(models.Model):
     telefone = models.CharField(max_length=11)
-
-
-class Cliente(models.model):
-    telefone = models.CharField(max_length=11)
-    usuario = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Endereco(models.Model):
@@ -27,18 +20,23 @@ class Endereco(models.Model):
 class Produto(models.Model):
     produto_nome = models.CharField(max_length=240)
     valor = models.FloatField()
-    descricao = models.CharField()
+    descricao = models.CharField(max_length=480)
+
+
+def get_image_filename(instance, filename):
+    id = instance.post.id
+    return "post_images/%s" % (id)
 
 
 class ImagemProduto(models.Model):
-    imagem_produto = models.ImageField()
+    imagem_produto = models.ImageField(upload_to='images/',  blank=True)
     imagem_descricao = models.CharField(max_length=480)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
 
 
 class ItemPedido(models.Model):
     quantidade = models.IntegerField()
-    valor_total = models.CharField()
+    valor_total = models.FloatField()
     produto = models.OneToOneField(Produto, on_delete=models.CASCADE)
 
 
