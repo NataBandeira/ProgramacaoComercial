@@ -23,11 +23,6 @@ class Produto(models.Model):
     descricao = models.CharField(max_length=480)
 
 
-def get_image_filename(instance, filename):
-    id = instance.post.id
-    return "post_images/%s" % (id)
-
-
 class ImagemProduto(models.Model):
     imagem_produto = models.ImageField(upload_to='images/',  blank=True)
     imagem_descricao = models.CharField(max_length=480)

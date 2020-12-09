@@ -2,20 +2,18 @@ from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from django.views.generic.base import View
 from . import forms
 from . import models
 from django.views.generic.edit import FormView
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-
-class FileFieldView(FormView):
+class FileFieldFormView(FormView):
     form_class = forms.ProdutoForm
     template_name = 'dashboard/register_produto.html'
     success_url = '/home/'
 
-    @login_required(login_url='/')
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         files = request.FILES.getlist('imagem_produto')
@@ -31,25 +29,19 @@ class FileFieldView(FormView):
             return self.form_invalid(form)
 
 
-@login_required(login_url='/')
-def register_endereco(request):
-    form = forms.EnderecoForm(request.POST)
-    if request.method == 'POST':
-        if form.is_valid():
-            endereco = form.save(request)
-            if endereco:
-                return redirect('/home/')
-        else:
-            print("ERROR")
-            form = forms.EnderecoForm(request.POST)
-            return render(request, 'dashboard/register_endereco.html', {'form': form})
-    else:
-        form = forms.EnderecoForm()
-        return render(request, 'dashboard/register_endereco.html', {'form': form})
+class EnderecoFormView(FormView):
+    form_class = forms.EnderecoForm
+    template_name = 'dashboard/register_endereco.html'
+    success_url = '/home/'
+
+    def form_valid(self, form) -> HttpResponse:
+        endereco = form.save(self.request)
+        if endereco:
+            return redirect('/home/')
+        return self.form_valid(form)
 
 
-@login_required(login_url='/')
-def homepage(request):
-    template = loader.get_template('dashboard/homepage.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
+class DashHomeView(View):
+    def get(self, request):
+        print("Entrou aqui")
+        return render(request, 'dashboard/homepage.html', {})
