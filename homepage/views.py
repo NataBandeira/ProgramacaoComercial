@@ -1,9 +1,11 @@
+from django import forms
 from django.http import HttpResponse
 from django.template import loader
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from django.views import View
-from dashboard.forms import UsuarioForm
+from django.views.generic.edit import FormView
+from .forms import *
 
 def login_page(request):
     template = loader.get_template('homepage/login.html')
@@ -21,7 +23,7 @@ def register(request):
             form = UsuarioForm(request.POST)
             if form.is_valid():
                 user = form.save()
-                return redirect('/home/')
+                return redirect('/')
                 
             else:
                 print("ERROR")
@@ -45,3 +47,16 @@ class Authenticate(View):
             return redirect('/home/')
         else:
             return render(request, 'homepage/login.html', {"errors": "Combinação de login e senha errada"})
+
+
+class EnderecoFormView(FormView):
+    form_class = EnderecoForm
+    template_name = 'pedido/register_endereco.html'
+    success_url = '/home/'
+
+    def form_valid(self, form) -> HttpResponse:
+        endereco = form.save(self.request)
+        if endereco:
+            return redirect('/home/')
+        return self.form_valid(form)
+

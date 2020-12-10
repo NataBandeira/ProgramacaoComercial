@@ -9,14 +9,17 @@
 
 <body>
 
+    <h1>Olá! Você está logado!</h1>
+
+    <ul>
+        <li><a href="{% url 'register_endereco' %}"> cadastrar endereço</a></li>
+        <li><a href="{% url 'register_produto_imagem' %}">adicionar imagem</a></li>
+    </ul>
+
     <form action="{% url 'logout_usuario' %}" method="post">
         {% csrf_token %}
         <input type="submit" value="Sair">
     </form>
-
-    <h1>Olá! Você está logado!</h1>
-    <a href="{% url 'register_endereco' %}"> cadastrar endereço</a>
-    <a href="{% url 'register_produto_imagem' %}">adicionar imagem</a>
 </body>
 
 </html>

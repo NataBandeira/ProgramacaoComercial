@@ -3,13 +3,13 @@ from django.template import loader
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View
-from . import forms
-from . import models
+from .forms import *
+from .models import *
 from django.views.generic.edit import FormView
 
 
 class FileFieldFormView(FormView):
-    form_class = forms.ProdutoForm
+    form_class = ProdutoForm
     template_name = 'dashboard/register_produto.html'
     success_url = '/home/'
 
@@ -27,18 +27,6 @@ class FileFieldFormView(FormView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
-
-class EnderecoFormView(FormView):
-    form_class = forms.EnderecoForm
-    template_name = 'dashboard/register_endereco.html'
-    success_url = '/home/'
-
-    def form_valid(self, form) -> HttpResponse:
-        endereco = form.save(self.request)
-        if endereco:
-            return redirect('/home/')
-        return self.form_valid(form)
 
 
 class DashHomeView(View):
