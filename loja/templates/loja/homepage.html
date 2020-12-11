@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -5,21 +6,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 
 <body>
 
-    <h1>Olá! Você está logado!</h1>
+    <style>
+        .lista-produtos {
+            margin-top: 30px
+        }
+
+        .navbar {
+            /* margin: 150 !important; */
+            padding: 30px;
+        }
+    </style>
+    <br>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg  navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Start Bootstrap</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">{{user.username}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Compras</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="{% url 'logout_usuario' %}" method="post">
+                            {% csrf_token %}
+                            <!-- <a class="nav-link" type="submit">Sair</a> -->
+                            <input class="nav-link btn btn-link" type="submit" value="Sair">
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- <h1>Olá! Você está logado!</h1>
 
     <ul>
-        <li><a href="{% url 'register_endereco' %}"> cadastrar endereço</a></li>
-        <li><a href="{% url 'register_produto_imagem' %}">adicionar imagem</a></li>
+        <li><a href="{% url 'register_endereco' %}"> Adicionar endereço</a></li>
+        <li><a href="{% url 'register_produto_imagem' %}">Adicionar produto</a></li>
     </ul>
 
     <form action="{% url 'logout_usuario' %}" method="post">
         {% csrf_token %}
         <input type="submit" value="Sair">
-    </form>
+    </form> -->
+
+
+    <div class="lista-produtos container">
+        <!-- Lista de produtos -->
+        <div class="row">
+            {% for p in produtos %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <a href="#"><img class="card-img-top" src="{{p.imagem.imagem_produto.url}}" alt=""></a>
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            <a href="#">{{p.produto.produto_nome}}</a>
+                        </h4>
+                        <h5>${{p.produto.valor}}</h5>
+                        <p class="card-text">{{p.produto.descricao}}</p>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Fim lista produtos -->
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-5">
+        <div class="container">
+            <p class="m-0 text-center">Copyright &copy; 2020</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
 </body>
 
 </html>

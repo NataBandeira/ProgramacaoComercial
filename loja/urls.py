@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static 
 
 urlpatterns = [
-    path('', views.DashHomeView.as_view(), name='homepage'),
+    path('', views.LojaTemplate.as_view(), name='homepage'),
     path('create/produto/', login_required(views.FileFieldFormView.as_view(), login_url='/'), name='register_produto_imagem')
 ]
 

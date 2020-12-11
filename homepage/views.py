@@ -44,14 +44,14 @@ class Authenticate(View):
 
         if user is not None:
             login(request, user)
-            return redirect('/home/')
+            return redirect('/loja')
         else:
             return render(request, 'homepage/login.html', {"errors": "Combinação de login e senha errada"})
 
 
 class EnderecoFormView(FormView):
     form_class = EnderecoForm
-    template_name = 'pedido/register_endereco.html'
+    template_name = 'homepage/register_endereco.html'
     success_url = '/home/'
 
     def form_valid(self, form) -> HttpResponse:
