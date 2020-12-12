@@ -34,7 +34,7 @@ class Authenticate(View):
 
         if user is not None:
             login(request, user)
-            return redirect('/loja')
+            return redirect('/pedido')
         else:
             return render(request, 'homepage/login.html', {"errors": "Combinação de login e senha errada"})
 

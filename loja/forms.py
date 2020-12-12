@@ -1,6 +1,25 @@
 from django import forms
 from . import models
+from pedido.models import Pedido
+import datetime
 
+class PedidoForm(forms.Form):
+    
+    quantidade = forms.IntegerField()
+
+    class Meta:
+        model = Pedido
+        fields = ['quantidade']
+
+    def save(self, user, produto):
+        pedido = Pedido.objects.create(
+            data = datetime.date.today(),
+            valor_total = self.cleaned_data['quantidade'] * produto.valor,
+            user = user,
+            quantidade = self.cleaned_data['quantidade'],
+            item_pedido = produto
+        )
+        return pedido
 
 class ProdutoForm(forms.Form):
     produto_nome = forms.CharField(max_length=240, label='Nome do produto:')

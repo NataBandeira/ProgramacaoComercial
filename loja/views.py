@@ -1,12 +1,48 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.template import loader
-from django.shortcuts import redirect, render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required, permission_required
 from django.views.generic.base import TemplateView, View
 from .forms import *
 from .models import *
 from django.views.generic.edit import FormView
+
+
+# Produto
+
+class ProdutoView(LoginRequiredMixin, View):
+    template_name = 'loja/produto_page.html'
+
+    def get(self, request, **kwargs):
+        id = self.kwargs.get('id')
+        produto = get_object_or_404(Produto, pk=id)
+        imagem = get_object_or_404(ImagemProduto, produto=produto)
+        form = PedidoForm()
+        context = {
+            'produto': produto,
+            'imagem': imagem,
+            'user': self.request.user,
+            'form': form
+        }
+        return render(request, 'loja/produto_page.html', context)
+
+    def post(self, request, **kwargs):
+        id = self.kwargs.get('id')
+        produto = get_object_or_404(Produto, pk=id)
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            pedido = form.save(request.user, produto)
+            return redirect('/loja')
+        else:
+            imagem = get_object_or_404(ImagemProduto, produto=produto)
+            context = {
+                'produto': produto,
+                'imagem': imagem,
+                'user': self.request.user,
+                'form': form
+            }
+            return render(request, self.template_name, context)
 
 
 class LojaTemplate(LoginRequiredMixin, TemplateView):
@@ -45,9 +81,3 @@ class FileFieldFormView(FormView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
-
-class DashHomeView(View):
-    def get(self, request):
-        print("Entrou aqui")
-        return render(request, 'loja/homepage.html', {})
