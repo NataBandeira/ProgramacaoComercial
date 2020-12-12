@@ -1,57 +1,61 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from . import models
+from .models import *
+from django.contrib.auth.forms import UserCreationForm
 
 
-class UsuarioForm(forms.Form):
+class UserForm(UserCreationForm):
 
     username = forms.CharField(
-        label='Nome:',
+        label='Nome',
         widget=forms.TextInput(
             # attrs={'placeholder': 'Maria ..'}
         )
     )
+
+    email = forms.EmailField(
+        label='E-mail',
+    )
+
+
+    class Meta:
+        model = User
+        fields = ['username', 'email',  'password1', 'password2', ]
+
+    # def clean_password2(self):
+    #     password1 = self.cleaned_data.get('password1')
+    #     password2 = self.cleaned_data.get('password2')
+    #     if password1 and password2 and password1 != password2:
+    #         raise ValidationError("A senhas não correspondem")
+    #     return password2
+
+    # def save(self):
+    #     user = User.objects.create_user(
+    #         self.cleaned_data['username'],
+    #         self.cleaned_data['email'],
+    #         self.cleaned_data['password1']
+    #     )
+    #     return user
+
+
+class ClienteForm(forms.ModelForm):
 
     telefone = forms.CharField(
         max_length=11,
         label='Telefone:',
     )
 
-    email = forms.EmailField(
-        label='E-mail:',
-    )
+    class Meta:
+        model = Cliente
+        fields = ['telefone']
 
-    password1 = forms.CharField(
-        label='Senha:',
-        widget=forms.PasswordInput
-    )
-
-    password2 = forms.CharField(
-        label='Confirme sua senha:',
-        widget=forms.PasswordInput
-    )
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        print(password1, password2)
-        if password1 and password2 and password1 != password2:
-            raise ValidationError("A senhas não correspondem")
-        return password2
-
-    def save(self):
-        user = User.objects.create_user(
-            self.cleaned_data['username'],
-            self.cleaned_data['email'],
-            self.cleaned_data['password1']
-        )
-        cliente = models.Cliente(
-            telefone=self.cleaned_data['telefone'],
-            user=user
-        )
-        cliente.save()
-        return user
+    # def save(self, user):
+    #     cliente = Cliente(
+    #         telefone=self.cleaned_data['telefone'],
+    #         user=user
+    #     )
+    #     cliente.save()
+    #     return cliente
 
 
 class EnderecoForm(forms.Form):
@@ -87,12 +91,12 @@ class EnderecoForm(forms.Form):
     )
 
     class Meta:
-        model = models.Endereco
+        model = Endereco
         fields = ('telefone_contato', 'cep', 'bairro',
                   'rua', 'numero', 'informacao_adicional')
 
     def save(self, request):
-        endereco = models.Endereco(
+        endereco = Endereco(
             telefone_contato=self.cleaned_data['telefone_contato'],
             cep=self.cleaned_data['cep'],
             bairro=self.cleaned_data['bairro'],
@@ -103,3 +107,57 @@ class EnderecoForm(forms.Form):
         endereco.user = request.user
         endereco.save()
         return endereco
+
+
+# class UsuarioForm(forms.ModelForm):
+
+#     username = forms.CharField(
+#         label='Nome:',
+#         widget=forms.TextInput(
+#             # attrs={'placeholder': 'Maria ..'}
+#         )
+#     )
+
+#     telefone = forms.CharField(
+#         max_length=11,
+#         label='Telefone:',
+#     )
+
+#     email = forms.EmailField(
+#         label='E-mail:',
+#     )
+
+#     password1 = forms.CharField(
+#         label='Senha:',
+#         widget=forms.PasswordInput
+#     )
+
+#     password2 = forms.CharField(
+#         label='Confirme sua senha:',
+#         widget=forms.PasswordInput
+#     )
+
+#     class Meta:
+#         model = User
+#         fields = ['username','email','telefone']
+
+#     def clean_password2(self):
+#         password1 = self.cleaned_data.get('password1')
+#         password2 = self.cleaned_data.get('password2')
+#         print(password1, password2)
+#         if password1 and password2 and password1 != password2:
+#             raise ValidationError("A senhas não correspondem")
+#         return password2
+
+#     def save(self):
+#         user = User.objects.create_user(
+#             self.cleaned_data['username'],
+#             self.cleaned_data['email'],
+#             self.cleaned_data['password1']
+#         )
+#         cliente = models.Cliente(
+#             telefone=self.cleaned_data['telefone'],
+#             user=user
+#         )
+#         cliente.save()
+#         return user

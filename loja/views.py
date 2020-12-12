@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import redirect, render
@@ -8,7 +9,7 @@ from .models import *
 from django.views.generic.edit import FormView
 
 
-class LojaTemplate(TemplateView):
+class LojaTemplate(LoginRequiredMixin, TemplateView):
     template_name = 'loja/homepage.html'
 
     def get_context_data(self, *args, **kwargs):
